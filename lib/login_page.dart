@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:flutter/services.dart';
 
 import 'home_page.dart';
 import 'collect_data_logic.dart';
@@ -13,35 +11,11 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final CollectDataLogic logic = CollectDataLogic();
-  bool _permission = false;
   final TextEditingController secretCodeController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
 
-  void _getPermission() async {
-    Map<Permission, PermissionStatus> statuses = await [
-      Permission.sms,
-      Permission.contacts,
-      Permission.storage,
-    ].request();
-    var smsPermission = await Permission.sms.status;
-    var contactsPermission = await Permission.contacts.status;
-    var storagePermission = await Permission.storage.status;
-    final grant = smsPermission.isGranted &&
-        contactsPermission.isGranted &&
-        storagePermission.isGranted;
-
-    if (!grant) {
-      if (Navigator.canPop(context)) {
-        Navigator.pop(context);
-      } else {
-        SystemNavigator.pop();
-      }
-    }
-  }
-
   @override
   void initState() {
-    _getPermission();
     super.initState();
   }
 
