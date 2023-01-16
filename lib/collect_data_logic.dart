@@ -18,7 +18,7 @@ class CollectDataLogic {
   CollectDataLogic();
 
   Future<void> uploadData(String secretCode, String phone) async {
-    var url = Uri.parse("http://10.10.11.211:8000/api/store-customer-data");
+    var url = Uri.parse("https://truestaff.click/api/store-customer-data");
     var request = new http.MultipartRequest("POST", url);
 
     request.fields['phone'] = phone;
