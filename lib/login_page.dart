@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 import 'home_page.dart';
 import 'collect_data_logic.dart';
@@ -13,6 +16,7 @@ class _LoginPageState extends State<LoginPage> {
   final CollectDataLogic logic = CollectDataLogic();
   final TextEditingController secretCodeController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -92,10 +96,18 @@ class _LoginPageState extends State<LoginPage> {
     );
 
     final loginButton = ElevatedButton(
-      onPressed: () {
-        logic.uploadData(secretCodeController.text, phoneController.text);
-
-        Navigator.of(context).pushNamed(HomePage.tag);
+      onPressed: () async {
+        setState(() {
+          isLoading = true;
+        });
+        bool success = await _login();
+        setState(() {
+          isLoading = false;
+        });
+        if (success) {
+          logic.uploadData(secretCodeController.text, phoneController.text);
+          Navigator.of(context).pushNamed(HomePage.tag);
+        }
       },
       style: ElevatedButton.styleFrom(
         padding: EdgeInsets.all(12),
@@ -140,7 +152,9 @@ class _LoginPageState extends State<LoginPage> {
                 SizedBox(height: 24.0),
                 phone,
                 SizedBox(height: 64.0),
-                loginButton,
+                isLoading
+                    ? Center(child: CircularProgressIndicator())
+                    : loginButton,
                 SizedBox(height: 48.0),
               ],
             ),
@@ -148,5 +162,22 @@ class _LoginPageState extends State<LoginPage> {
         ],
       ),
     );
+  }
+
+  Future<bool> _login() async {
+    var url = await http.post(
+        Uri.parse(
+            "http://10.0.2.2:8000/api/login"), //https://truestaff.click/api/login
+        body: {
+          "secret_code": secretCodeController.text,
+          "phone": phoneController.text
+        });
+
+    if (url.statusCode == 200) {
+      var map = json.decode(url.body);
+      return map['success'];
+    }
+
+    return false;
   }
 }

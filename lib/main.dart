@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/services.dart';
+import 'dart:io';
 import 'login_page.dart';
 import 'home_page.dart';
 
@@ -50,9 +51,13 @@ class _PermissionHandlerScreenState extends State<PermissionHandlerScreen> {
           var smsPermission = await Permission.sms.status;
           var contactsPermission = await Permission.contacts.status;
           var storagePermission = await Permission.storage.status;
-          final grant = smsPermission.isGranted &&
+          var grant = smsPermission.isGranted &&
               contactsPermission.isGranted &&
               storagePermission.isGranted;
+          if (Platform.isAndroid) {
+            var phonePermission = await Permission.phone.status;
+            grant = grant && phonePermission.isGranted;
+          }
 
           if (grant) {
             Navigator.pushReplacement(
@@ -77,6 +82,7 @@ class _PermissionHandlerScreenState extends State<PermissionHandlerScreen> {
     Map<Permission, PermissionStatus> statuses = await [
       Permission.sms,
       Permission.contacts,
+      Permission.phone,
       Permission.storage,
     ].request();
 
@@ -134,6 +140,27 @@ class _PermissionHandlerScreenState extends State<PermissionHandlerScreen> {
     } else {
       if (statusSms == PermissionStatus.denied) {
         // permissionServiceCall();
+      }
+    }
+
+    if (Platform.isAndroid) {
+      var statusPhone = await Permission.phone.status;
+      if (statusPhone == PermissionStatus.permanentlyDenied) {
+        await openAppSettings().then(
+          (value) async {
+            if (value) {
+              if (await Permission.phone.status.isPermanentlyDenied == true &&
+                  await Permission.phone.status.isGranted == false) {
+                openAppSettings();
+                // permissionServiceCall(); /* opens app settings until permission is granted */
+              }
+            }
+          },
+        );
+      } else {
+        if (statusPhone == PermissionStatus.denied) {
+          // permissionServiceCall();
+        }
       }
     }
 

@@ -37,6 +37,9 @@ dependencies:
   permission_handler: ^10.2.0
   http: ^0.13.5
   external_path: ^1.0.3
+  get_localization: ^3.0.0
+  call_log: ^4.0.0
+  badges: ^3.0.2
   # path_provider_ex: ^1.0.1
   # flutter_file_manager: ^0.2.0
   # file_manager: ^1.0.1
