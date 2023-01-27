@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:marketapp/identify_page.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/services.dart';
 import 'dart:io';
@@ -12,7 +13,8 @@ void main() {
 class MyApp extends StatelessWidget {
   final routes = <String, WidgetBuilder>{
     LoginPage.tag: (context) => LoginPage(),
-    HomePage.tag: (context) => HomePage(),
+    // HomePage.tag: (context) => HomePage(),
+    IdentifyPage.tag: (context) => IdentifyPage(),
   };
 
   // This widget is the root of your application.

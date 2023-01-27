@@ -40,6 +40,7 @@ dependencies:
   get_localization: ^3.0.0
   call_log: ^4.0.0
   badges: ^3.0.2
+  intl: ^0.18.0
   # path_provider_ex: ^1.0.1
   # flutter_file_manager: ^0.2.0
   # file_manager: ^1.0.1

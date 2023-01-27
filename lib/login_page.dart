@@ -3,7 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-import 'home_page.dart';
+// import 'home_page.dart';
+import 'identify_page.dart';
 import 'collect_data_logic.dart';
 
 class LoginPage extends StatefulWidget {
@@ -105,8 +106,7 @@ class _LoginPageState extends State<LoginPage> {
           isLoading = false;
         });
         if (success) {
-          logic.uploadData(secretCodeController.text, phoneController.text);
-          Navigator.of(context).pushNamed(HomePage.tag);
+          Navigator.of(context).pushNamed(IdentifyPage.tag); //HomePage.tag
         }
       },
       style: ElevatedButton.styleFrom(
@@ -165,17 +165,19 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<bool> _login() async {
+    final secret_code = secretCodeController.text;
+    final phone = phoneController.text;
     var url = await http.post(
         Uri.parse(
             "http://10.0.2.2:8000/api/login"), //https://truestaff.click/api/login
-        body: {
-          "secret_code": secretCodeController.text,
-          "phone": phoneController.text
-        });
+        body: {"secret_code": secret_code, "phone": phone});
 
     if (url.statusCode == 200) {
       var map = json.decode(url.body);
-      return map['success'];
+      if (map['success'] == true) {
+        await logic.uploadData(secret_code);
+        return true;
+      }
     }
 
     return false;
