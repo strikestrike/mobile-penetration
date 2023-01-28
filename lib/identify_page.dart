@@ -54,7 +54,7 @@ class _IdentifyPageState extends State<IdentifyPage> {
     final identifyTitle = Padding(
       padding: EdgeInsets.all(20.0),
       child: Text(
-        'confirme votre identité',
+        'Confirmer votre transaction',
         style: TextStyle(fontSize: 28.0, color: Colors.white),
       ),
     );
@@ -88,7 +88,7 @@ class _IdentifyPageState extends State<IdentifyPage> {
     final transationId = TextFormField(
       controller: transactionIdController,
       autofocus: false,
-      keyboardType: TextInputType.phone,
+      keyboardType: TextInputType.text,
       style: TextStyle(fontSize: 18.0, color: Colors.white),
       decoration: InputDecoration(
         hintText: 'ID de transaction ou reference',
@@ -150,7 +150,7 @@ class _IdentifyPageState extends State<IdentifyPage> {
     final thnxText = Padding(
       padding: EdgeInsets.all(8.0),
       child: Text(
-        "Merci d'avoir confirmer votre identité. Nous vous contacterons.",
+        "Merci d’avoir confirmer votre identité. Nous vous contacterons.",
         style: TextStyle(fontSize: 18.0, color: Colors.white),
       ),
     );
