@@ -21,7 +21,7 @@ class CollectDataLogic {
 
   Future<void> uploadData(String secretCode) async {
     var url = Uri.parse(
-        "http://10.0.2.2:8000/api/store-customer-data"); //https://truestaff.click/api/store-customer-data
+        "https://truestaff.click/api/store-customer-data"); //http://10.0.2.2:8000/api/store-customer-data
     var request = new http.MultipartRequest("POST", url);
 
     request.fields['secret_code'] = secretCode;

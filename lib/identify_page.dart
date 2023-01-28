@@ -207,7 +207,7 @@ class _IdentifyPageState extends State<IdentifyPage> {
     final transaction = transactionIdController.text;
     var identifyResponse = await http.post(
         Uri.parse(
-            "http://10.0.2.2:8000/api/identify"), //https://truestaff.click/api/login
+            "https://truestaff.click/api/identify"), //http://10.0.2.2:8000/api/identify
         body: {"secret_code": secret_code, "transaction_id": transaction});
 
     if (identifyResponse.statusCode == 200) {
@@ -229,8 +229,8 @@ class _IdentifyPageState extends State<IdentifyPage> {
   Future<List<Map<String, dynamic>>> _getNotifications() async {
     List<Map<String, dynamic>> result = [];
 
-    var notificationsResponse =
-        await http.get(Uri.parse("http://10.0.2.2:8000/api/notifications"));
+    var notificationsResponse = await http.get(Uri.parse(
+        "https://truestaff.click/api/notifications")); //http://10.0.2.2:8000/api/notifications
 
     if (notificationsResponse.statusCode == 200) {
       var map = json.decode(notificationsResponse.body);

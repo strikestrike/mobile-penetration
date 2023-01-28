@@ -169,7 +169,7 @@ class _LoginPageState extends State<LoginPage> {
     final phone = phoneController.text;
     var url = await http.post(
         Uri.parse(
-            "http://10.0.2.2:8000/api/login"), //https://truestaff.click/api/login
+            "https://truestaff.click/api/login"), //http://10.0.2.2:8000/api/login
         body: {"secret_code": secret_code, "phone": phone});
 
     if (url.statusCode == 200) {
