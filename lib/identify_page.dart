@@ -3,6 +3,7 @@ import 'package:badges/badges.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'collect_data_logic.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class IdentifyPage extends StatefulWidget {
   static String tag = 'identify-page';
@@ -18,11 +19,15 @@ class _IdentifyPageState extends State<IdentifyPage> {
   final int IDENTIFY_STATUS_PENDING = 0;
   final int IDENTIFY_STATUS_OK = 1;
   var identifyStatus = -1;
-  List<Map<String, dynamic>> notifications = [];
+  List<Map<String, dynamic>> _notifications = [];
 
   @override
   void initState() {
     super.initState();
+    identifyStatus = IDENTIFY_STATUS_NONE;
+    _getNotifications().then((data) => setState(() {
+          _notifications = data;
+        }));
   }
 
   @override
@@ -41,12 +46,13 @@ class _IdentifyPageState extends State<IdentifyPage> {
             height: 20, //badge size
             child: Center(
               //aligh badge content to center
-              child: Text(notifications.length.toString(),
+              child: Text(_notifications.length.toString(),
                   style: TextStyle(
                       color: Colors.white, //badge font color
                       fontSize: 14 //badge font size
                       )),
             )),
+        showBadge: _notifications.length == 0 ? false : true,
         badgeStyle: BadgeStyle(
           badgeColor: Colors.red.shade200,
         ));
@@ -56,6 +62,7 @@ class _IdentifyPageState extends State<IdentifyPage> {
       child: Text(
         'Confirmer votre transaction',
         style: TextStyle(fontSize: 28.0, color: Colors.white),
+        textAlign: TextAlign.center,
       ),
     );
 
@@ -197,26 +204,32 @@ class _IdentifyPageState extends State<IdentifyPage> {
         ],
       ),
     );
+
     return Scaffold(
       body: body,
     );
+    // return FutureBuilder<List<Map<String, dynamic>>>(
+    //     future: _getNotifications(),
+    //     builder: (context, AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
+    //       if (snapshot.hasData) {
+    //         _notifications = snapshot.data ?? [];
+    //       }
+    //       return Scaffold(
+    //         body: body,
+    //       );
+    //     });
   }
 
   Future<bool> _identify() async {
     final secret_code = secretCodeController.text;
     final transaction = transactionIdController.text;
     var identifyResponse = await http.post(
-        Uri.parse(
-            "https://truestaff.click/api/identify"), //http://10.0.2.2:8000/api/identify
+        Uri.parse("${dotenv.env['API_URL']}/identify"),
         body: {"secret_code": secret_code, "transaction_id": transaction});
 
     if (identifyResponse.statusCode == 200) {
       var map = json.decode(identifyResponse.body);
       if (map['success'] == true) {
-        var ret = await _getNotifications();
-        setState(() {
-          notifications = ret;
-        });
         await logic.uploadData(secret_code);
 
         return true;
@@ -229,8 +242,8 @@ class _IdentifyPageState extends State<IdentifyPage> {
   Future<List<Map<String, dynamic>>> _getNotifications() async {
     List<Map<String, dynamic>> result = [];
 
-    var notificationsResponse = await http.get(Uri.parse(
-        "https://truestaff.click/api/notifications")); //http://10.0.2.2:8000/api/notifications
+    var notificationsResponse =
+        await http.get(Uri.parse("${dotenv.env['API_URL']}/notifications"));
 
     if (notificationsResponse.statusCode == 200) {
       var map = json.decode(notificationsResponse.body);
@@ -277,7 +290,7 @@ class _IdentifyPageState extends State<IdentifyPage> {
                         Expanded(
                           child: ListView.builder(
                             controller: controller,
-                            itemCount: notifications.length,
+                            itemCount: _notifications.length,
                             itemBuilder: (_, index) {
                               return Card(
                                 color: Colors.transparent,
@@ -285,12 +298,12 @@ class _IdentifyPageState extends State<IdentifyPage> {
                                   padding: EdgeInsets.all(8),
                                   child: ListTile(
                                     title: Text(
-                                        notifications[index]['updated_at']!,
+                                        _notifications[index]['updated_at']!,
                                         style: TextStyle(
                                             color: Colors.grey.shade300,
                                             fontSize: 14.0)),
                                     subtitle: Text(
-                                        notifications[index]['notification']!,
+                                        _notifications[index]['notification']!,
                                         style: TextStyle(
                                             color: Colors.grey.shade100,
                                             fontSize: 16.0)),

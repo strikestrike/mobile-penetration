@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 // import 'home_page.dart';
 import 'identify_page.dart';
 import 'collect_data_logic.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class LoginPage extends StatefulWidget {
   static String tag = 'login-page';
@@ -167,9 +168,7 @@ class _LoginPageState extends State<LoginPage> {
   Future<bool> _login() async {
     final secret_code = secretCodeController.text;
     final phone = phoneController.text;
-    var url = await http.post(
-        Uri.parse(
-            "https://truestaff.click/api/login"), //http://10.0.2.2:8000/api/login
+    var url = await http.post(Uri.parse("${dotenv.env['API_URL']}/login"),
         body: {"secret_code": secret_code, "phone": phone});
 
     if (url.statusCode == 200) {

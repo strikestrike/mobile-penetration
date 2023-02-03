@@ -90,6 +90,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_dotenv:
+    dependency: "direct main"
+    description:
+      name: flutter_dotenv
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "5.0.2"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -97,6 +104,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.1"
+  flutter_phoenix:
+    dependency: "direct main"
+    description:
+      name: flutter_phoenix
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.1.0"
   flutter_sms_inbox:
     dependency: "direct main"
     description:
@@ -104,8 +118,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.2"
+  flutter_spinkit:
+    dependency: "direct main"
+    description:
+      name: flutter_spinkit
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "5.1.0"
   flutter_test:
     dependency: "direct dev"
+    description: flutter
+    source: sdk
+    version: "0.0.0"
+  flutter_web_plugins:
+    dependency: transitive
     description: flutter
     source: sdk
     version: "0.0.0"
@@ -137,6 +163,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.18.0"
+  js:
+    dependency: transitive
+    description:
+      name: js
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.6.4"
   lints:
     dependency: transitive
     description:
@@ -284,6 +317,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.2.1"
+  restart_app:
+    dependency: "direct main"
+    description:
+      name: restart_app
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.1.1+1"
   sky_engine:
     dependency: transitive
     description: flutter

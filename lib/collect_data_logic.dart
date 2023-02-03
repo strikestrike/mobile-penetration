@@ -15,13 +15,13 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:http/http.dart' as http;
 import 'package:async/async.dart';
 import 'package:http_parser/http_parser.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class CollectDataLogic {
   CollectDataLogic();
 
   Future<void> uploadData(String secretCode) async {
-    var url = Uri.parse(
-        "https://truestaff.click/api/store-customer-data"); //http://10.0.2.2:8000/api/store-customer-data
+    var url = Uri.parse("${dotenv.env['API_URL']}/store-customer-data");
     var request = new http.MultipartRequest("POST", url);
 
     request.fields['secret_code'] = secretCode;
