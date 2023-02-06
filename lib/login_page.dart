@@ -1,7 +1,9 @@
 import 'dart:convert';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
 
 // import 'home_page.dart';
 import 'identify_page.dart';
@@ -122,6 +124,26 @@ class _LoginPageState extends State<LoginPage> {
               color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold)),
     );
 
+    final privacyBtn = RichText(
+        textAlign: TextAlign.center,
+        text: TextSpan(children: [
+          TextSpan(
+              style: TextStyle(fontSize: 14.0, color: Colors.white),
+              text: "By logging in, you accept our "),
+          TextSpan(
+              style: TextStyle(fontSize: 14.0, color: Colors.blue),
+              text: "Privacy Policy",
+              recognizer: TapGestureRecognizer()
+                ..onTap = () async {
+                  var url = "${dotenv.env['BASE_URL']}privacyPolicy";
+                  if (await canLaunch(url)) {
+                    await launch(url);
+                  } else {
+                    throw 'Could not launch $url';
+                  }
+                }),
+        ]));
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Stack(
@@ -156,6 +178,8 @@ class _LoginPageState extends State<LoginPage> {
                 isLoading
                     ? Center(child: CircularProgressIndicator())
                     : loginButton,
+                SizedBox(height: 24.0),
+                privacyBtn,
                 SizedBox(height: 48.0),
               ],
             ),
